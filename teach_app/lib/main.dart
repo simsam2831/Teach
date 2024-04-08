@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
+import 'screens/teacher_signup_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
       ),
       home: LoginScreen(),
       routes: {
-        '/signup': (context) => SignupScreen(), // Assure-toi d'avoir un fichier signup_screen.dart avec un widget SignupScreen.
+        '/signup': (context) => SignupScreen(),
+        '/signup-teacher': (context) => TeacherSignupScreen(),
       },
     );
   }

@@ -4,17 +4,13 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Connexion'),
-        backgroundColor: Colors.blue,
-      ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // Ajoute ici le logo ou le nom de ton application
+            Image.asset('assets/images/logo.png'),
             TextField(
               decoration: InputDecoration(
                 labelText: 'Email',
@@ -49,7 +45,7 @@ class LoginScreen extends StatelessWidget {
             TextButton(
               child: Text("Sign up"),
               onPressed: () {
-                // Naviguer vers l'écran d'inscription
+                Navigator.of(context).pushNamed('/signup'); 
               },
             ),
           ],
