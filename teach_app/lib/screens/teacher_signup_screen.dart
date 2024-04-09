@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class TeacherSignupScreen extends StatefulWidget {
   @override
@@ -8,8 +10,13 @@ class TeacherSignupScreen extends StatefulWidget {
 
 class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _hourlyRateController = TextEditingController();
   PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'US'); // IsoCode par défaut pour l'exemple
+
 
   // Une liste des options d'expérience
   final List<String> _experienceOptions = [
@@ -20,8 +27,45 @@ class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
 
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _ageController.dispose();
     _phoneNumberController.dispose();
+    _hourlyRateController.dispose();
     super.dispose();
+  }
+
+  Future<void> submitTeacherData(BuildContext context) async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    
+    final response = await http.post(
+      Uri.parse('http://127.0.0.1:8000/professors/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'first_name': _firstNameController.text,
+        'last_name': _lastNameController.text,
+        'age': int.tryParse(_ageController.text),  // Assure-toi que cela ne renvoie pas null
+        'years_of_experience': _selectedExperience,
+        'phone_number': _phoneNumber.phoneNumber,  // Vérifie la manière dont tu accèdes à cette valeur
+        'hourly_rate': double.tryParse(_hourlyRateController.text),
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      // Handle success
+      print('Teacher data submitted successfully');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Teacher signed up successfully!')),
+      );
+    } else {
+      // Handle failure
+      print('Failed to submit teacher data: ${response.body}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign up.')),
+      );
+    }
   }
 
   @override
@@ -38,6 +82,7 @@ class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TextFormField(
+                controller: _firstNameController, // Ajoute ceci
                 decoration: InputDecoration(
                   labelText: 'First Name *',
                   border: OutlineInputBorder(),
@@ -51,6 +96,7 @@ class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
               ),
               SizedBox(height: 16.0),
               TextFormField(
+                controller: _lastNameController,
                 decoration: InputDecoration(
                   labelText: 'Last Name *',
                   border: OutlineInputBorder(),
@@ -64,6 +110,7 @@ class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
               ),
               SizedBox(height: 16.0),
               TextFormField(
+                controller: _ageController,
                 decoration: InputDecoration(
                   labelText: 'Age *',
                   border: OutlineInputBorder(),
@@ -122,6 +169,7 @@ class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
               ),
               SizedBox(height: 16.0),
               TextFormField(
+                controller: _hourlyRateController,
                 decoration: InputDecoration(
                   labelText: 'Hourly Rate (optional)',
                   border: OutlineInputBorder(),
@@ -130,15 +178,19 @@ class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
               ),
               SizedBox(height: 24.0),
               ElevatedButton(
+                style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.blue), // Couleur d'arrière-plan
+                foregroundColor: MaterialStateProperty.all(Colors.white), // Couleur du texte
+                ),
                 child: Text('Submit'),
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Processing Data')),
-                    );
-                    // Logique d'inscription
-                  }
-                },
+                onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Processing Data')),
+                  );
+                  await submitTeacherData(context); // Assure-toi que cette fonction accepte `context`
+                }
+              },
               ),
             ],
           ),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,6 +16,7 @@ class LoginScreen extends StatelessWidget {
           children: <Widget>[
             Image.asset('assets/images/logo.png'),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
                 border: OutlineInputBorder(
@@ -22,6 +27,7 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 16.0),
             TextField(
+              controller: _passwordController,
               decoration: InputDecoration(
                 labelText: 'Mot de passe',
                 border: OutlineInputBorder(

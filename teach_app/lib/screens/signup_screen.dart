@@ -39,7 +39,7 @@ class SignupScreen extends StatelessWidget {
               ),
               child: Text('School'),
               onPressed: () {
-                // Logique pour s'inscrire en tant qu'école
+                Navigator.of(context).pushNamed('/signup-school'); 
               },
             ),
           ],
