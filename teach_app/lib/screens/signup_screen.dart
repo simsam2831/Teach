@@ -45,7 +45,7 @@ class _SignupScreenState extends State<SignupScreen> {
       'username': _usernameController.text,
       'email': _emailController.text,
       'password': _passwordController.text,
-      'accountType': _accountType,
+      'account_type': _accountType,
     };
 
     if (_accountType == 'Teacher') {
