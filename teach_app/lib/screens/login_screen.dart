@@ -3,9 +3,31 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LoginScreen extends StatelessWidget {
-
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _login(BuildContext context) async {
+    final url = Uri.parse('http://127.0.0.1:8000/api/login/'); // Ajustez cette URL à votre endpoint d'authentification
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'username': _usernameController.text,
+        'password': _passwordController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else {
+      // Si la connexion échoue, affichez un message d'erreur
+      print('Échec de la connexion');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Échec de la connexion. Vérifiez vos identifiants.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +40,14 @@ class LoginScreen extends StatelessWidget {
           children: <Widget>[
             Image.asset('assets/images/logo.png'),
             TextField(
-              controller: _emailController,
+              controller: _usernameController,
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: 'Username',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              keyboardType: TextInputType.emailAddress,
+              keyboardType: TextInputType.text,
             ),
             SizedBox(height: 16.0),
             TextField(
@@ -41,42 +63,16 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 24.0),
             ElevatedButton(
               child: Text('Login'),
-              onPressed: () async {
-                // URL de l'endpoint d'authentification
-                final url = Uri.parse('http://127.0.0.1:8000/api/token/');
-
-                // Envoie une requête POST à l'endpoint
-                final response = await http.post(
-                  url,
-                  headers: {'Content-Type': 'application/json'},
-                  body: json.encode({
-                    'username': _emailController.text,
-                    'password': _passwordController.text,
-                  }),
-                );
-
-                if (response.statusCode == 200) {
-                  // Si la connexion réussit, naviguer vers une nouvelle page ou faire quelque chose d'autre
-                  print('Connexion réussie');
-                  Navigator.of(context).pushReplacementNamed('/home'); // Assure-toi d'avoir une route '/home'
-                } else {
-                  // Si la connexion échoue, afficher une erreur
-                  print('Échec de la connexion');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Échec de la connexion')),
-                  );
-                }
-              },
+              onPressed: () => _login(context),
               style: ButtonStyle(
-                foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Text color
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue), // Background color
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
               ),
             ),
-
             TextButton(
               child: Text("Sign up"),
               onPressed: () {
-                Navigator.of(context).pushNamed('/signup'); 
+                Navigator.of(context).pushNamed('/signup');
               },
             ),
           ],

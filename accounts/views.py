@@ -1,11 +1,21 @@
-from django.contrib.auth import get_user_model
-from rest_framework import generics
+from django.contrib.auth import get_user_model, authenticate, login
 from rest_framework.response import Response
-from rest_framework import status
 from .serializers import UserSerializer
-from rest_framework import viewsets
+from rest_framework import viewsets, status, views, generics
+
 
 User = get_user_model()
+
+class LoginView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return Response({"message": "Login successful"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

@@ -43,10 +43,12 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication', # Décommentez pour utiliser l'authentification basique
+    ]
 }
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -59,7 +61,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "teach_project.urls"
 
-AUTHENTICATION_BACKENDS = ['accounts.authentication.EmailBackend']
+AUTHENTICATION_BACKENDS = ['accounts.authentication.UsernameBackend',
+                           'django.contrib.auth.backends.ModelBackend',]
 AUTH_USER_MODEL = 'accounts.User'
 
 TEMPLATES = [

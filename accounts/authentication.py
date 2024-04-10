@@ -1,12 +1,10 @@
 from django.contrib.auth.backends import ModelBackend
 from .models import User
 
-class EmailBackend(ModelBackend):
+class UsernameBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
-        # Logique d'authentification utilisant l'email
-
         try:
-            user = User.objects.get(email=username)
+            user = User.objects.get(username=username)  # Utilisez `username` pour la recherche
             if user.check_password(password):
                 return user
         except User.DoesNotExist:
