@@ -27,11 +27,11 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        print(validated_data)
         account_type = validated_data.pop('account_type')
 
-        # Ici, pop tous les champs qui ne sont pas destinés au modèle User
         user_data = {key: validated_data.pop(key) for key in ['username', 'email', 'password']}
-
+        user_data['account_type'] = account_type 
         user = User.objects.create_user(**user_data)
 
         if account_type == 'Teacher':

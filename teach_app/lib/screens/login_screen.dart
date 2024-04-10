@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -17,8 +19,12 @@ class LoginScreen extends StatelessWidget {
         'password': _passwordController.text,
       }),
     );
+      
+    final responseData = json.decode(response.body);
 
     if (response.statusCode == 200) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('accountType', responseData['account_type']);  // Sauvegardez le type de compte
       Navigator.of(context).pushReplacementNamed('/home');
     } else {
       // Si la connexion échoue, affichez un message d'erreur

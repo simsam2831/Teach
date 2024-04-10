@@ -20,6 +20,8 @@ class _SignupScreenState extends State<SignupScreen> {
   String _accountType = 'Teacher';
   String _selectedExperience = '0-1 years';
   final List<String> _experienceOptions = ["0-1 years", "1-3 years", "3-7 years", "7+ years"];
+  String _selectedAvailability = 'Full-time';
+  final List<String> _availabilityOptions = ["Full-time", "Evenings & Weekend", "4 days per week", "3 days per week", "2 days per week", "1 day a week"];
 
   Future<void> signUpUser() async {
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -50,10 +52,11 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (_accountType == 'Teacher') {
       signUpData.addAll({
-        'firstName': _firstNameController.text,
-        'lastName': _lastNameController.text,
+        'first_name': _firstNameController.text,
+        'last_name': _lastNameController.text,
         'age': _ageController.text,
-        'yearsOfExperience': _selectedExperience,
+        'years_of_experience': _selectedExperience,
+        'availability': _selectedAvailability,
       });
     } else if (_accountType == 'School') {
       signUpData.addAll({
@@ -187,6 +190,26 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   keyboardType: TextInputType.number,
                 ),
+                SizedBox(height: 16.0),
+                DropdownButtonFormField<String>(
+                  value: _selectedAvailability,
+                  decoration: InputDecoration(
+                    labelText: 'Availability',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: _availabilityOptions.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedAvailability = value!;
+                    });
+                  },
+                ),
+
                 SizedBox(height: 16.0),
                 DropdownButtonFormField(
                   value: _selectedExperience,

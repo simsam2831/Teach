@@ -22,12 +22,33 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     username = models.CharField(max_length=40, unique=True)
     email = models.EmailField(unique=True)
-    # Autres champs selon vos besoins
-
+    account_type = models.CharField(max_length=10, choices=(('Teacher', 'Teacher'), ('School', 'School')))
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email']
+
+
+class School(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='school')
+    school_name = models.CharField(max_length=100, default='School Name')
+    address = models.CharField(max_length=255, default='Address')
+
+    def __str__(self):
+        return self.school_name
+    
+
+class Job(models.Model):
+    title = models.CharField(max_length=255, verbose_name="Intitulé")
+    description = models.TextField(verbose_name="Description")
+    duration = models.CharField(max_length=100, verbose_name="Durée")
+    salary = models.CharField(max_length=100, blank=True, null=True, verbose_name="Salaire")
+    school_name = models.CharField(max_length=255, verbose_name="Nom de l'école")
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='jobs')
+
+    def __str__(self):
+        return self.title
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher')
@@ -40,10 +61,3 @@ class Teacher(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-class School(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='school')
-    school_name = models.CharField(max_length=100, default='School Name')
-    address = models.CharField(max_length=255, default='Address')
-
-    def __str__(self):
-        return self.school_name
