@@ -1,6 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
+  @override
+  _SignupScreenState createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> signUpUser() async {
+    final response = await http.post(
+      Uri.parse('http://http://127.0.0.1:8000//api/users/'), // Remplace <ton-domaine> par l'URL de ton API
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'email': _emailController.text,
+        'password': _passwordController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Si le serveur retourne une réponse "OK", naviguer vers l'écran de connexion ou l'accueil
+      Navigator.of(context).pop(); // Exemple de retour à l'écran précédent
+    } else {
+      // Si le serveur ne retourne pas une réponse "OK", afficher une erreur
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Signup Failed'),
+          content: Text('Failed to sign up.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Okay'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+            )
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,34 +56,31 @@ class SignupScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
-              'Are you a Teacher or a School?',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'E-mail',
+                border: OutlineInputBorder(),
               ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            SizedBox(height: 16.0),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
             ),
             SizedBox(height: 24.0),
             ElevatedButton(
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.blue), // Couleur d'arrière-plan
-                foregroundColor: MaterialStateProperty.all(Colors.white), // Couleur du texte
+                backgroundColor: MaterialStateProperty.all(Colors.blue),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
               ),
-              child: Text('Teacher'),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/signup-teacher'); 
-              },
-            ),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.blue), // Couleur d'arrière-plan
-                foregroundColor: MaterialStateProperty.all(Colors.white), // Couleur du texte
-              ),
-              child: Text('School'),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/signup-school'); 
-              },
+              child: Text('Sign Up'),
+              onPressed: signUpUser,
             ),
           ],
         ),

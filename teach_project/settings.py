@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 REST_FRAMEWORK = {
@@ -57,6 +58,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "teach_project.urls"
+
+AUTHENTICATION_BACKENDS = ['accounts.authentication.EmailBackend']
+AUTH_USER_MODEL = 'accounts.User'
 
 TEMPLATES = [
     {

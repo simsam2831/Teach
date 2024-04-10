@@ -13,6 +13,7 @@ class _TeacherSignupScreenState extends State<TeacherSignupScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _hourlyRateController = TextEditingController();
   PhoneNumber _phoneNumber = PhoneNumber(isoCode: 'US'); // IsoCode par défaut pour l'exemple

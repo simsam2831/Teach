@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginScreen extends StatelessWidget {
 
@@ -39,8 +41,31 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 24.0),
             ElevatedButton(
               child: Text('Login'),
-              onPressed: () {
-                // Logique de connexion
+              onPressed: () async {
+                // URL de l'endpoint d'authentification
+                final url = Uri.parse('http://127.0.0.1:8000/api/token/');
+
+                // Envoie une requête POST à l'endpoint
+                final response = await http.post(
+                  url,
+                  headers: {'Content-Type': 'application/json'},
+                  body: json.encode({
+                    'username': _emailController.text,
+                    'password': _passwordController.text,
+                  }),
+                );
+
+                if (response.statusCode == 200) {
+                  // Si la connexion réussit, naviguer vers une nouvelle page ou faire quelque chose d'autre
+                  print('Connexion réussie');
+                  Navigator.of(context).pushReplacementNamed('/home'); // Assure-toi d'avoir une route '/home'
+                } else {
+                  // Si la connexion échoue, afficher une erreur
+                  print('Échec de la connexion');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Échec de la connexion')),
+                  );
+                }
               },
               style: ButtonStyle(
                 foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Text color
